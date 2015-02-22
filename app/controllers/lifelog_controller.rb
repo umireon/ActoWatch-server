@@ -24,8 +24,8 @@ class LifelogController < ApplicationController
     durations = JSON.parse(res.response.body)['result'].map do |act|
       startTime = DateTime.parse(act['startTime'])
       endTime = DateTime.parse(act['endTime'])
-      startTime - endTime
+      endTime - startTime
     end
-    @res = durations.to_s
+    @res = durations.inject(:+)
   end
 end
