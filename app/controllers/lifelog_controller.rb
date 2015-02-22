@@ -26,6 +26,6 @@ class LifelogController < ApplicationController
       endTime = DateTime.parse(act['endTime'])
       endTime - startTime
     end
-    @res = durations.inject(:+)
+    @res = (durations.inject(:+) * 86400.0).to_f
   end
 end
