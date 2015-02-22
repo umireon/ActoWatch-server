@@ -20,6 +20,11 @@ class LifelogController < ApplicationController
   def activities
     client = OAuth2::Client.new(ENV['LIFELOG_CLIENT_ID'], ENV['LIFELOG_CLIENT_SECRET'], site: 'https://platform.lifelog.sonymobile.com/', authorize_url: '/oauth/2/authorize', token_url: '/oauth/2/token')
     token = OAuth2::AccessToken.from_hash(client, JSON.parse(current_user.lifelog_oauth_token))
+    if token.expired?
+      token.refresh!
+      currenc_user.lifelog_oauth_token = token.to_hash.to_json
+      current_user.save
+    end
     res = token.get('/v1/users/me/activities')
     durations = JSON.parse(res.response.body)['result'].map do |act|
       startTime = DateTime.parse(act['startTime'])
