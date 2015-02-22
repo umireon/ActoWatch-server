@@ -1,4 +1,5 @@
 require 'json'
+require 'date'
 
 class LifelogController < ApplicationController
   before_action :authenticate_user!
@@ -19,6 +20,12 @@ class LifelogController < ApplicationController
   def activities
     client = OAuth2::Client.new(ENV['LIFELOG_CLIENT_ID'], ENV['LIFELOG_CLIENT_SECRET'], site: 'https://platform.lifelog.sonymobile.com/', authorize_url: '/oauth/2/authorize', token_url: '/oauth/2/token')
     token = OAuth2::AccessToken.from_hash(client, JSON.parse(current_user.lifelog_oauth_token))
-    @res = token.get('/v1/users/me/activities')
+    res = token.get('/v1/users/me/activities')
+    durations = JSON.parse(res.response.body)['result'].map do |act|
+      startTime = DateTime.parse(act['startTime'])
+      endTime = DateTime.parse(act['endTime'])
+      startTime - endTime
+    end
+    @res = durations.to_s
   end
 end
