@@ -26,6 +26,7 @@ class LifelogController < ApplicationController
       endTime = DateTime.parse(act['endTime'])
       endTime - startTime
     end
-    @res = (durations.inject(:+) * 86400.0).to_f
+    seconds = (durations.inject(:+) * 86400.0).to_f
+    render json: {"seconds" => seconds}
   end
 end
