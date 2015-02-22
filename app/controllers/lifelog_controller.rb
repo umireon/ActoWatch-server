@@ -21,7 +21,7 @@ class LifelogController < ApplicationController
     client = OAuth2::Client.new(ENV['LIFELOG_CLIENT_ID'], ENV['LIFELOG_CLIENT_SECRET'], site: 'https://platform.lifelog.sonymobile.com/', authorize_url: '/oauth/2/authorize', token_url: '/oauth/2/token')
     token = OAuth2::AccessToken.from_hash(client, JSON.parse(current_user.lifelog_oauth_token))
     if token.expired?
-      refresh_client = OAuth2::Client.new(ENV['LIFELOG_CLIENT_ID'], ENV['LIFELOG_CLIENT_SECRET'], site: 'https://platform.lifelog.sonymobile.com/', authorize_url: '/oauth/2/authorize', token_url: '/oauth/2/token')
+      refresh_client = OAuth2::Client.new(ENV['LIFELOG_CLIENT_ID'], ENV['LIFELOG_CLIENT_SECRET'], site: 'https://platform.lifelog.sonymobile.com/', token_url: '/oauth/2/refresh_token')
       refresh_token = OAuth2::AccessToken.from_hash(refresh_client, token.to_hash)
       token = refresh_token.refresh!
       current_user.lifelog_oauth_token = token.to_hash.to_json
